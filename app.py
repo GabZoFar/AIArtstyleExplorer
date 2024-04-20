@@ -2,10 +2,10 @@ import streamlit as st
 from PIL import Image
 import base64
 import requests
-from io import BytesIO
+# from io import BytesIO
 
 # Setting up the title of the application
-st.title('Image Inference with DeepInfra')
+st.title('Art Style Explorer')
 
 # Input for the API key
 API_KEY = st.text_input("Enter your DeepInfra API Key:", type="password")
@@ -24,7 +24,7 @@ image_url = st.text_input("Enter the URL of the image:")
 
 def call_deepinfra_api(base64_image, api_key):
     """Send the base64 encoded image to DeepInfra for inference."""
-    url = "https://api.deepinfra.com/v1/inference/llava-hf/llava-1.5-7b-hf"
+    url = "https://api.deepinfra.com/v1/openai/chat/completions"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}"
