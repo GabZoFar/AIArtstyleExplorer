@@ -1,72 +1,66 @@
 import streamlit as st
-import os
 from PIL import Image
-import google.generativeai as genai
+import base64
+import requests
+from io import BytesIO
 
-st.title('Image Captioning and Tagging')
+# Setting up the title of the application
+st.title('Image Inference with DeepInfra')
 
+# Input for the API key
+API_KEY = st.text_input("Enter your DeepInfra API Key:", type="password")
+
+# File uploader allows the user to upload an image
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
 
-API_KEY = st.text_input("Enter your API Key:&nbsp;&nbsp; &nbsp;&nbsp; Get your Google Studio API key from [here](https://makersuite.google.com/app/apikey)", type="password")
-if uploaded_file is not None:
-    if st.button('Upload'):
-        if API_KEY.strip() == '':
-            st.error('Enter a valid API key')
-        else:
-            file_path = os.path.join("temp", uploaded_file.name)
-            with open(file_path, "wb") as f:
-                f.write(uploaded_file.getvalue())
-            img = Image.open(file_path)
-            try:
-                genai.configure(api_key=API_KEY)
-                model = genai.GenerativeModel('gemini-pro-vision')
-                caption = model.generate_content(["Write a caption for the image in english",img])
-                tags=model.generate_content(["Generate 5 hash tags for the image in a line in english",img])
-                st.image(img, caption=f"Caption: {caption.text}")
-                st.write(f"Tags: {tags.text}")
-            except Exception as e:
-                error_msg = str(e)
-                if "API_KEY_INVALID" in error_msg:
-                    st.error("Invalid API Key. Please enter a valid API Key.")
-                else:
-                    st.error(f"Failed to configure API due to {error_msg}")
-footer="""
-  <style>
-        a:link, a:visited {
-            color: blue;
-            text-decoration: dotted; /* Remove underline */
-        }
+def encode_image_to_base64(image):
+    """Encode image to base64."""
+    buffered = BytesIO()
+    image.save(buffered, format="JPEG")
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-        a:hover, a:active {
-            color: skyblue;
-        }
-        .footer .p{
-            font-size:10px;
-        }
+def call_deepinfra_api(base64_image, api_key):
+    """Send the base64 encoded image to DeepInfra for inference."""
+    url = "https://api.deepinfra.com/v1/inference/llava-hf/llava-1.5-7b-hf"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+    data = {
+        "model": "llava-hf/llava-1.5-7b-hf",
+        "messages": [
+            {
+                "role": "user",
+                "content": {
+                    "type": "image_base64",
+                    "image_base64": base64_image
+                }
+            },
+            {
+                "role": "system",
+                "content": {
+                    "type": "text",
+                    "text": "Analyze this image."
+                }
+            }
+        ]
+    }
+    response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception("API request failed with status code: " + str(response.status_code))
 
-        /* Footer */
-        .footer {
-            position:fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            height:10%;
-            font-size:15px;
-            color: white; 
-            text-align: center;
-            padding: 10px 0; 
-        }
-        .footer p{
-            font-size:20px;
-        }
+if uploaded_file is not None and API_KEY:
+    if st.button('Analyze Image'):
+        try:
+            img = Image.open(uploaded_file)
+            img = img.convert("RGB")  # Convert image to RGB
+            encoded_image = encode_image_to_base64(img)  # Encode the image to base64
+            result = call_deepinfra_api(encoded_image, API_KEY)  # Send the encoded image for inference
+            inference_result = result.get('choices', [{}])[0].get('message', {}).get('content', 'No inference result available')
+            st.write(f"Inference Result: {inference_result}")  # Display the inference result as plain text
+        except Exception as e:
+            st.error(f"Failed to process image due to: {str(e)}")
 
-        .footer a:hover {
-            color: white;
-        }
-    </style>
-
-    <div class="footer">
-        <p>Developed with ❤ by <a href="https://www.linkedin.com/in/sgvkamalakar" target="_blank">sgvkamalakar</a></p>
-    </div>
-"""
-st.markdown(footer,unsafe_allow_html=True)
+# Add footer or additional UI elements below if necessary
