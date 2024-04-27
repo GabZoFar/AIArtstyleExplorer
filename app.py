@@ -27,7 +27,7 @@ prompt = st.text_input("What would you like the model to tell you from this imag
 
 def call_deepinfra_api(image_url, prompt, api_key):
     """Send the image URL and prompt to DeepInfra for inference."""
-    url = "https://api.deepinfra.com/v1/inference/"
+    url = "https://api.deepinfra.com/v1/openai/chat/completions"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}"
