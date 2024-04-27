@@ -15,7 +15,7 @@ API_KEY = st.text_input("Key:", type="password")
 image_url = st.text_input("Enter the URL of the image:")
 
 # Input for the prompt sent to the API with automatic resizing
-prompt = st.text_area("What would you like the model to tell you from this image?", height=100, max_chars=200, key="textarea")
+prompt = st.text_area("What would you like the model to tell you from this image?", height=400, max_chars=4000, key="textarea")
 st.markdown(
     """
     <style>
