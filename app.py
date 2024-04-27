@@ -14,8 +14,18 @@ API_KEY = st.text_input("Key:", type="password")
 # Input for the image URL
 image_url = st.text_input("Enter the URL of the image:")
 
-# Input for the prompt sent to the API
-prompt = st.text_input("What would you like the model to tell you from this image?", max_chars=5000)
+# Input for the prompt sent to the API with automatic resizing
+prompt = st.text_area("What would you like the model to tell you from this image?", height=100, max_chars=200, key="textarea")
+st.markdown(
+    """
+    <style>
+    #textarea {
+        resize: vertical;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # File uploader allows the user to upload an image
 # uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
