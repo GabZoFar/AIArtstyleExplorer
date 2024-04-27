@@ -9,13 +9,13 @@ import json
 st.title('Art Style Explorer')
 
 # Input for the API key
-API_KEY = st.text_input("Enter your DeepInfra API Key:", type="password")
+API_KEY = st.text_input("Key:", type="password")
 
 # Input for the image URL
 image_url = st.text_input("Enter the URL of the image:")
 
 # Input for the prompt sent to the API
-prompt = st.text_input("What would you like the model to tell you from this image?")
+prompt = st.text_input("What would you like the model to tell you from this image?", max_chars=5000)
 
 # File uploader allows the user to upload an image
 # uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
