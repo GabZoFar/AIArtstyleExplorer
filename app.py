@@ -8,7 +8,7 @@ import requests
 st.title('Art Style Explorer')
 
 # Input for the API key
-# API_KEY = st.text_input("Enter your DeepInfra API Key:", type="password")
+API_KEY = st.text_input("Enter your DeepInfra API Key:", type="password")
 
 # Input for the image URL
 image_url = st.text_input("Enter the URL of the image:")
