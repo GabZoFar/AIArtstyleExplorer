@@ -2,13 +2,14 @@ import streamlit as st
 from PIL import Image
 import base64
 import requests
+import json
 # from io import BytesIO
 
 # Setting up the title of the application
 st.title('Art Style Explorer')
 
 # Input for the API key
-api_key = st.text_input("Enter your DeepInfra API Key:", type="password")
+API_KEY = st.text_input("Enter your DeepInfra API Key:", type="password")
 
 # Input for the image URL
 image_url = st.text_input("Enter the URL of the image:")
