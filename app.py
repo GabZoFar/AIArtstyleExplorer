@@ -63,10 +63,13 @@ def call_deepinfra_api(image_url, prompt, api_key):
 if image_url and API_KEY and prompt:
     if st.button('Analyze Image'):
         try:
-            result = call_deepinfra_api(image_url, API_KEY, prompt)
+            result = call_deepinfra_api(image_url, prompt, API_KEY)  # Corrected the order of arguments
             if result:
                 # Convert the dictionary to JSON formatted string and display it
                 json_result = json.dumps(result, indent=2)  # Beautify the JSON response
                 st.json(json_result)  # Use st.json to render the JSON in the UI
         except Exception as e:
             st.error(f"Failed to process image due to: {str(e)}")
+
+
+            
